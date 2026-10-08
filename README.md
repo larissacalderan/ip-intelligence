@@ -79,7 +79,7 @@ A interface foi inspirada em **terminais, sistemas de monitoramento e interfaces
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/SEU-USUARIO/ip-intelligence.git
+git clone https://github.com/larissacalderan/ip-intelligence.git
 ```
 
 ### 2. Entre na pasta
