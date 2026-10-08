@@ -2,16 +2,13 @@
 
 > Uma ferramenta web moderna para análise de endereços IP, desenvolvida com HTML, CSS e JavaScript.
 
-![IP Intelligence](https://img.shields.io/badge/IP-Intelligence-00ff88?style=for-the-badge\&labelColor=050505)
-![HTML5](https://img.shields.io/badge/HTML5-050505?style=for-the-badge\&logo=html5\&logoColor=00ff88)
-![CSS3](https://img.shields.io/badge/CSS3-050505?style=for-the-badge\&logo=css3\&logoColor=00ff88)
-![JavaScript](https://img.shields.io/badge/JavaScript-050505?style=for-the-badge\&logo=javascript\&logoColor=00ff88)
+![IP Intelligence](./preview.png)
 
 ---
 
 ## 🖥️ Sobre o projeto
 
-O **IP Intelligence** é uma aplicação web criada para consultar e analisar endereços IP públicos, apresentando informações de rede, localização aproximada e dados técnicos através de uma interface moderna inspirada em terminais e sistemas de análise.
+O **IP Intelligence** é uma aplicação web criada para consultar e analisar endereços IP públicos, apresentando informações de rede, localização aproximada e dados técnicos através de uma interface moderna inspirada em sistemas de monitoramento e análise.
 
 O projeto foi desenvolvido com foco em **design, interatividade, responsividade e integração com APIs**, utilizando apenas tecnologias web.
 
@@ -60,7 +57,7 @@ O projeto foi desenvolvido com foco em **design, interatividade, responsividade 
 
 ## 🎨 Interface
 
-O projeto utiliza uma identidade visual baseada em:
+O projeto utiliza uma identidade visual baseada em uma estética **dark/cyber**, com elementos inspirados em sistemas de monitoramento e análise de dados.
 
 ```text
 BACKGROUND  →  #050505
@@ -70,7 +67,7 @@ BORDERS     →  #1C1C1C
 TEXT        →  #EEEEEE
 ```
 
-A interface foi inspirada em **terminais, sistemas de monitoramento e interfaces de análise**, utilizando uma estética escura com detalhes em verde neon.
+O objetivo é proporcionar uma interface moderna, limpa e imersiva, mantendo a aplicação simples de utilizar.
 
 ---
 
@@ -79,7 +76,7 @@ A interface foi inspirada em **terminais, sistemas de monitoramento e interfaces
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/larissacalderan/ip-intelligence.git
+git clone https://github.com/larissacladeran/ip-intelligence.git
 ```
 
 ### 2. Entre na pasta
@@ -110,13 +107,13 @@ SEARCH
 
 O sistema irá consultar a API e apresentar as informações disponíveis sobre o endereço.
 
-Também é possível clicar em:
+Também é possível utilizar:
 
 ```text
 FIND MY IP
 ```
 
-para descobrir automaticamente o IP público utilizado na conexão.
+para identificar automaticamente o IP público utilizado na conexão.
 
 ---
 
@@ -139,13 +136,13 @@ LATITUDE
 LONGITUDE
 ```
 
-Além disso, a localização aproximada pode ser aberta diretamente no Google Maps.
+A localização aproximada também pode ser aberta diretamente no Google Maps.
 
 ---
 
 ## 🔐 Privacidade
 
-O **IP Intelligence** trabalha com informações públicas fornecidas pelo serviço de geolocalização de IP.
+O **IP Intelligence** utiliza informações públicas fornecidas pelo serviço de geolocalização de IP.
 
 A localização apresentada é **aproximada** e não representa necessariamente o endereço físico exato de uma pessoa.
 
@@ -157,13 +154,13 @@ Um endereço IP não deve ser interpretado como uma forma de obter a localizaç�
 
 Este projeto utiliza a **IPWho.is API** para obter informações relacionadas aos endereços IP.
 
-Os dados retornados dependem das informações disponíveis para cada endereço IP.
+Os dados apresentados dependem das informações disponíveis para cada endereço.
 
 ---
 
 ## 📱 Responsividade
 
-A interface foi desenvolvida para funcionar em diferentes tamanhos de tela:
+A interface foi desenvolvida para funcionar em diferentes dispositivos:
 
 ```text
 💻 Desktop
@@ -182,6 +179,7 @@ ip-intelligence/
 ├── index.html
 ├── style.css
 ├── script.js
+├── preview.png
 └── README.md
 ```
 
@@ -209,14 +207,10 @@ Este projeto foi desenvolvido como parte do meu portfólio para praticar e demon
 
 Desenvolvedora Full Stack com foco em **Front-End**, apaixonada por criar interfaces modernas, funcionais e intuitivas.
 
----
-
-<div align="center">
-
-### 🟢 IP INTELLIGENCE
-
-**Analise. Descubra. Explore.**
-
 ⭐ Se você gostou do projeto, deixe uma estrela no repositório!
 
-</div>
+---
+
+## 📄 Licença
+
+Este projeto está disponível para fins de estudo e portfólio.
