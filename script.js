@@ -1,65 +1,81 @@
 const API_URL = "https://ipwho.is";
 
 const ipInput = document.getElementById("ipInput");
-const searchButton = document.getElementById("searchButton");
-const myIpButton = document.getElementById("myIpButton");
+const searchBtn = document.getElementById("searchBtn");
+const myIpBtn = document.getElementById("myIpBtn");
 
-const results = document.getElementById("results");
 const loading = document.getElementById("loading");
+const error = document.getElementById("error");
 const errorMessage = document.getElementById("errorMessage");
+const results = document.getElementById("results");
 
-const copyButton = document.getElementById("copyButton");
+const copyBtn = document.getElementById("copyBtn");
+const clearHistoryBtn = document.getElementById("clearHistoryBtn");
 
-const historySection = document.getElementById("historySection");
-const historyList = document.getElementById("historyList");
-const clearHistoryButton = document.getElementById("clearHistory");
+const historyContainer = document.getElementById("history");
 
-const resultIp = document.getElementById("resultIp");
-const ipAddress = document.getElementById("ipAddress");
-const ipVersion = document.getElementById("ipVersion");
+let currentData = null;
 
-const locationElement = document.getElementById("location");
-const country = document.getElementById("country");
-
-const isp = document.getElementById("isp");
-const organization = document.getElementById("organization");
-const asn = document.getElementById("asn");
-
-const timezone = document.getElementById("timezone");
-const utcOffset = document.getElementById("utcOffset");
-
-const postal = document.getElementById("postal");
-
-const latitude = document.getElementById("latitude");
-const longitude = document.getElementById("longitude");
-
-const mapLink = document.getElementById("mapLink");
-
-
-/* ========================================
-   VALIDAR IP
-======================================== */
-
-function isValidIP(ip) {
-
-    const ipv4 =
-        /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-
-    const ipv6 =
-        /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4})$/;
-
-    return ipv4.test(ip) || ipv6.test(ip);
+function mostrarLoading() {
+    loading.classList.remove("hidden");
+    results.classList.add("hidden");
+    error.classList.add("hidden");
 }
 
+function esconderLoading() {
+    loading.classList.add("hidden");
+}
 
-/* ========================================
-   CONSULTAR IP
-======================================== */
+function mostrarErro(mensagem) {
+    esconderLoading();
 
-async function searchIP(ip = "") {
+    errorMessage.textContent = mensagem;
 
-    clearError();
-    showLoading();
+    error.classList.remove("hidden");
+    results.classList.add("hidden");
+}
+
+function esconderErro() {
+    error.classList.add("hidden");
+}
+
+function valor(valor, fallback = "Não disponível") {
+    if (
+        valor === null ||
+        valor === undefined ||
+        valor === ""
+    ) {
+        return fallback;
+    }
+
+    return valor;
+}
+
+function detectarVersaoIP(ip) {
+    if (!ip) {
+        return "IP";
+    }
+
+    return ip.includes(":") ? "IPv6" : "IPv4";
+}
+
+function escaparHTML(texto) {
+    return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function formatarData(data) {
+    return new Date(data).toLocaleString("pt-BR");
+}
+
+async function consultarIP(ip = "") {
+
+    mostrarLoading();
+    esconderErro();
 
     try {
 
@@ -67,156 +83,126 @@ async function searchIP(ip = "") {
             ? `${API_URL}/${encodeURIComponent(ip)}`
             : API_URL;
 
-        console.log("Consultando:", url);
-
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(
-                `HTTP Error ${response.status}`
-            );
+            throw new Error("Erro na comunicação com a API.");
         }
 
         const data = await response.json();
 
-        console.log("Resposta da API:", data);
-
         if (!data.success) {
             throw new Error(
-                data.message || "Unable to analyze this IP."
+                data.message || "IP inválido ou não encontrado."
             );
         }
 
-        const formattedData = {
+        currentData = data;
 
-            ip: data.ip,
+        mostrarResultado(data);
 
-            city: data.city || "Unknown",
+        salvarHistorico(data);
 
-            region: data.region || "Unknown",
+        carregarHistorico();
 
-            country_name:
-                data.country || "Unknown",
+    } catch (err) {
 
-            country_code:
-                data.country_code || "",
+        console.error(err);
 
-            latitude:
-                data.latitude,
-
-            longitude:
-                data.longitude,
-
-            timezone:
-                data.timezone?.id || "Unknown",
-
-            utc_offset:
-                data.timezone?.utc || "",
-
-            postal:
-                data.postal || "Unavailable",
-
-            org:
-                data.connection?.isp ||
-                "Unknown",
-
-            asn:
-                data.connection?.asn
-                    ? `AS${data.connection.asn}`
-                    : "Unavailable"
-
-        };
-
-        displayResults(formattedData);
-
-        saveToHistory(formattedData);
-
-    } catch (error) {
-
-        console.error(
-            "IP Intelligence Error:",
-            error
+        mostrarErro(
+            err.message ||
+            "Não foi possível consultar este endereço IP."
         );
-
-        showError(
-            error.message ||
-            "Failed to fetch IP information."
-        );
-
-    } finally {
-
-        hideLoading();
-
     }
 }
 
+function mostrarResultado(data) {
 
-/* ========================================
-   MOSTRAR RESULTADOS
-======================================== */
-
-function displayResults(data) {
+    esconderLoading();
 
     results.classList.remove("hidden");
 
-    resultIp.textContent =
-        data.ip || "Unknown";
+    const ip = valor(data.ip);
 
-    ipAddress.textContent =
-        data.ip || "Unknown";
+    const country = valor(data.country);
+    const region = valor(data.region);
+    const city = valor(data.city);
 
-    ipVersion.textContent =
-        detectIPVersion(data.ip);
+    const postal = valor(data.postal);
 
-    locationElement.textContent =
-        `${data.city || "Unknown"}, ${data.region || "Unknown"}`;
+    const latitude = valor(data.latitude);
+    const longitude = valor(data.longitude);
 
-    country.textContent =
-        `${data.country_name || "Unknown"}${
-            data.country_code
-                ? ` • ${data.country_code}`
-                : ""
-        }`;
+    const timezone = data.timezone
+        ? valor(data.timezone.id)
+        : "Não disponível";
 
-    isp.textContent =
-        data.org || "Unknown";
+    const isp = data.connection
+        ? valor(data.connection.isp)
+        : "Não disponível";
 
-    organization.textContent =
-        data.org || "Unknown";
+    const organization = data.connection
+        ? valor(data.connection.org)
+        : "Não disponível";
 
-    asn.textContent =
-        data.asn || "Unavailable";
+    const asn = data.connection
+        ? valor(data.connection.asn)
+        : "Não disponível";
 
-    timezone.textContent =
-        data.timezone || "Unknown";
+    document.getElementById("ipAddress").textContent = ip;
 
-    utcOffset.textContent =
-        data.utc_offset
-            ? `UTC ${data.utc_offset}`
-            : "UTC unavailable";
+    document.getElementById("ipVersion").textContent =
+        detectarVersaoIP(ip);
 
-    postal.textContent =
-        data.postal || "Unavailable";
+    document.getElementById("country").textContent =
+        country;
 
-    latitude.textContent =
-        data.latitude ?? "Unavailable";
+    document.getElementById("region").textContent =
+        region;
 
-    longitude.textContent =
-        data.longitude ?? "Unavailable";
+    document.getElementById("city").textContent =
+        city;
 
+    document.getElementById("postal").textContent =
+        postal;
+
+    document.getElementById("isp").textContent =
+        isp;
+
+    document.getElementById("organization").textContent =
+        organization;
+
+    document.getElementById("asn").textContent =
+        asn;
+
+    document.getElementById("latitude").textContent =
+        latitude;
+
+    document.getElementById("longitude").textContent =
+        longitude;
+
+    document.getElementById("timezone").textContent =
+        timezone;
+
+    const mapsLink = document.getElementById("mapsLink");
 
     if (
+        data.latitude !== null &&
+        data.longitude !== null &&
         data.latitude !== undefined &&
         data.longitude !== undefined
     ) {
 
-        mapLink.href =
+        mapsLink.href =
             `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
+
+        mapsLink.style.display = "block";
 
     } else {
 
-        mapLink.href = "#";
+        mapsLink.removeAttribute("href");
 
+        mapsLink.style.display = "none";
     }
 
     results.scrollIntoView({
@@ -225,348 +211,222 @@ function displayResults(data) {
     });
 }
 
+function salvarHistorico(data) {
 
-/* ========================================
-   DETECTAR IPV4 / IPV6
-======================================== */
-
-function detectIPVersion(ip) {
-
-    if (!ip) {
-        return "Unknown";
-    }
-
-    return ip.includes(":")
-        ? "IPv6"
-        : "IPv4";
-}
-
-
-/* ========================================
-   BOTÃO FIND MY IP
-======================================== */
-
-myIpButton.addEventListener(
-    "click",
-    function () {
-
-        console.log("FIND MY IP clicado");
-
-        searchIP();
-
-    }
-);
-
-
-/* ========================================
-   BOTÃO SEARCH
-======================================== */
-
-searchButton.addEventListener(
-    "click",
-    handleSearch
-);
-
-
-/* ========================================
-   ENTER NO INPUT
-======================================== */
-
-ipInput.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key === "Enter") {
-
-            handleSearch();
-
-        }
-
-    }
-);
-
-
-/* ========================================
-   PESQUISA MANUAL
-======================================== */
-
-function handleSearch() {
-
-    const ip =
-        ipInput.value.trim();
-
-    clearError();
-
-    if (!ip) {
-
-        showError(
-            "Enter an IP address to continue."
-        );
-
-        return;
-    }
-
-    if (!isValidIP(ip)) {
-
-        showError(
-            "Invalid IP address."
-        );
-
-        return;
-    }
-
-    searchIP(ip);
-}
-
-
-/* ========================================
-   LOADING
-======================================== */
-
-function showLoading() {
-
-    loading.classList.remove("hidden");
-
-    results.classList.add("hidden");
-
-    searchButton.disabled = true;
-
-    myIpButton.disabled = true;
-}
-
-
-function hideLoading() {
-
-    loading.classList.add("hidden");
-
-    searchButton.disabled = false;
-
-    myIpButton.disabled = false;
-}
-
-
-/* ========================================
-   ERRO
-======================================== */
-
-function showError(message) {
-
-    errorMessage.textContent =
-        `> ERROR: ${message}`;
-}
-
-
-function clearError() {
-
-    errorMessage.textContent = "";
-
-}
-
-
-/* ========================================
-   COPIAR DADOS
-======================================== */
-
-copyButton.addEventListener(
-    "click",
-    async function () {
-
-        const text = `
-IP Address: ${ipAddress.textContent}
-IP Version: ${ipVersion.textContent}
-Location: ${locationElement.textContent}
-Country: ${country.textContent}
-ISP: ${isp.textContent}
-Organization: ${organization.textContent}
-ASN: ${asn.textContent}
-Timezone: ${timezone.textContent}
-UTC Offset: ${utcOffset.textContent}
-Postal Code: ${postal.textContent}
-Latitude: ${latitude.textContent}
-Longitude: ${longitude.textContent}
-        `.trim();
-
-        try {
-
-            await navigator.clipboard.writeText(text);
-
-            copyButton.textContent =
-                "COPIED ✓";
-
-            setTimeout(
-                () => {
-                    copyButton.textContent =
-                        "COPY DATA";
-                },
-                1500
-            );
-
-        } catch {
-
-            showError(
-                "Could not copy the information."
-            );
-
-        }
-
-    }
-);
-
-
-/* ========================================
-   SALVAR HISTÓRICO
-======================================== */
-
-function saveToHistory(data) {
-
-    const history =
+    let historico =
         JSON.parse(
-            localStorage.getItem(
-                "ipHistory"
-            ) || "[]"
-        );
+            localStorage.getItem("ipIntelligenceHistory")
+        ) || [];
 
     const item = {
-
         ip: data.ip,
-
-        location:
-            `${data.city || "Unknown"}, ${
-                data.country_code || ""
-            }`,
-
-        timestamp:
-            new Date().toISOString()
-
+        country: data.country,
+        region: data.region,
+        city: data.city,
+        date: new Date().toISOString()
     };
 
-    const filtered =
-        history.filter(
-            entry =>
-                entry.ip !== item.ip
-        );
-
-    filtered.unshift(item);
-
-    const limited =
-        filtered.slice(0, 10);
-
-    localStorage.setItem(
-        "ipHistory",
-        JSON.stringify(limited)
+    historico = historico.filter(
+        itemAnterior => itemAnterior.ip !== data.ip
     );
 
-    renderHistory();
+    historico.unshift(item);
+
+    historico = historico.slice(0, 10);
+
+    localStorage.setItem(
+        "ipIntelligenceHistory",
+        JSON.stringify(historico)
+    );
 }
 
+function carregarHistorico() {
 
-/* ========================================
-   MOSTRAR HISTÓRICO
-======================================== */
-
-function renderHistory() {
-
-    const history =
+    const historico =
         JSON.parse(
-            localStorage.getItem(
-                "ipHistory"
-            ) || "[]"
-        );
+            localStorage.getItem("ipIntelligenceHistory")
+        ) || [];
 
-    if (!history.length) {
+    if (historico.length === 0) {
 
-        historySection.classList.add(
-            "hidden"
-        );
+        historyContainer.innerHTML = `
+            <div class="empty-history">
+                Nenhuma consulta realizada.
+            </div>
+        `;
 
         return;
     }
 
-    historySection.classList.remove(
-        "hidden"
-    );
+    historyContainer.innerHTML = historico
+        .map(item => {
 
-    historyList.innerHTML = "";
+            const localizacao = [
+                item.city,
+                item.region,
+                item.country
+            ]
+                .filter(Boolean)
+                .join(", ");
 
-    history.forEach(
-        function (item) {
+            return `
+                <div
+                    class="history-item"
+                    data-ip="${escaparHTML(item.ip)}"
+                >
 
-            const element =
-                document.createElement(
-                    "div"
-                );
+                    <span class="history-ip">
+                        ${escaparHTML(item.ip)}
+                    </span>
 
-            element.className =
-                "history-item";
+                    <span class="history-location">
+                        ${escaparHTML(
+                            localizacao || "Localização não disponível"
+                        )}
+                    </span>
 
-            element.innerHTML = `
-                <span class="history-ip">
-                    ${escapeHTML(item.ip)}
-                </span>
+                    <span class="history-date">
+                        ${formatarData(item.date)}
+                    </span>
 
-                <span class="history-location">
-                    ${escapeHTML(item.location)}
-                </span>
+                </div>
             `;
 
-            element.addEventListener(
-                "click",
-                function () {
+        })
+        .join("");
 
-                    ipInput.value =
-                        item.ip;
+    document
+        .querySelectorAll(".history-item")
+        .forEach(item => {
 
-                    searchIP(item.ip);
+            item.addEventListener("click", () => {
 
-                }
-            );
+                const ip = item.dataset.ip;
 
-            historyList.appendChild(
-                element
-            );
+                ipInput.value = ip;
 
-        }
-    );
+                consultarIP(ip);
+            });
+        });
 }
 
+function gerarTextoParaCopiar() {
 
-/* ========================================
-   LIMPAR HISTÓRICO
-======================================== */
-
-clearHistoryButton.addEventListener(
-    "click",
-    function () {
-
-        localStorage.removeItem(
-            "ipHistory"
-        );
-
-        renderHistory();
-
+    if (!currentData) {
+        return "";
     }
+
+    const data = currentData;
+
+    const timezone = data.timezone
+        ? valor(data.timezone.id)
+        : "Não disponível";
+
+    const isp = data.connection
+        ? valor(data.connection.isp)
+        : "Não disponível";
+
+    const organization = data.connection
+        ? valor(data.connection.org)
+        : "Não disponível";
+
+    const asn = data.connection
+        ? valor(data.connection.asn)
+        : "Não disponível";
+
+    return `
+IP INTELLIGENCE
+
+ENDEREÇO IP: ${valor(data.ip)}
+VERSÃO: ${detectarVersaoIP(data.ip)}
+
+PAÍS: ${valor(data.country)}
+REGIÃO: ${valor(data.region)}
+CIDADE: ${valor(data.city)}
+CEP APROXIMADO: ${valor(data.postal)}
+
+PROVEDOR: ${isp}
+ORGANIZAÇÃO: ${organization}
+ASN: ${asn}
+
+LATITUDE: ${valor(data.latitude)}
+LONGITUDE: ${valor(data.longitude)}
+
+FUSO HORÁRIO: ${timezone}
+
+Observação:
+A localização obtida através de IP é aproximada e não representa necessariamente o endereço físico exato.
+    `.trim();
+}
+
+async function copiarInformacoes() {
+
+    const texto = gerarTextoParaCopiar();
+
+    if (!texto) {
+        return;
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(texto);
+
+        const textoOriginal = copyBtn.textContent;
+
+        copyBtn.textContent =
+            "✓ INFORMAÇÕES COPIADAS";
+
+        setTimeout(() => {
+
+            copyBtn.textContent = textoOriginal;
+
+        }, 2000);
+
+    } catch (err) {
+
+        console.error(
+            "Erro ao copiar informações:",
+            err
+        );
+    }
+}
+
+searchBtn.addEventListener("click", () => {
+
+    const ip = ipInput.value.trim();
+
+    consultarIP(ip);
+});
+
+myIpBtn.addEventListener("click", () => {
+
+    ipInput.value = "";
+
+    consultarIP();
+});
+
+ipInput.addEventListener("keydown", event => {
+
+    if (event.key === "Enter") {
+
+        const ip = ipInput.value.trim();
+
+        consultarIP(ip);
+    }
+});
+
+copyBtn.addEventListener(
+    "click",
+    copiarInformacoes
 );
 
+clearHistoryBtn.addEventListener("click", () => {
 
-/* ========================================
-   SEGURANÇA
-======================================== */
+    localStorage.removeItem(
+        "ipIntelligenceHistory"
+    );
 
-function escapeHTML(value) {
+    carregarHistorico();
+});
 
-    const div =
-        document.createElement(
-            "div"
-        );
-
-    div.textContent = value;
-
-    return div.innerHTML;
-}
-
-
-/* ========================================
-   INICIALIZAÇÃO
-======================================== */
-
-renderHistory();
+carregarHistorico();

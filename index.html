@@ -13,151 +13,191 @@
 
     <div class="background-grid"></div>
 
-    <main class="container">
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">◉</span>
+            <span>IP INTELLIGENCE</span>
+        </div>
 
-        <header class="header">
-            <div class="logo">
-                <span class="logo-icon">◉</span>
-                <span>IP<span>INTELLIGENCE</span></span>
-            </div>
+        <div class="status">
+            <span class="status-dot"></span>
+            SISTEMA ONLINE
+        </div>
+    </header>
 
-            <div class="status">
-                <span class="status-dot"></span>
-                SYSTEM ONLINE
-            </div>
-        </header>
+    <main>
 
         <section class="hero">
 
-            <p class="terminal-label">
-                <span>></span> IP_ANALYSIS_SYSTEM
-            </p>
+            <div class="hero-label">
+                SISTEMA DE ANÁLISE DE IP
+            </div>
 
             <h1>
-                Discover information<br>
-                about any <span>IP address.</span>
+                Descubra informações<br>
+                sobre qualquer <span>IP.</span>
             </h1>
 
-            <p class="description">
-                Analyze public IP addresses and discover network,
-                geographic and technical information.
+            <p>
+                Consulte informações técnicas e de localização aproximada
+                de qualquer endereço IP.
             </p>
 
             <div class="search-container">
 
-                <div class="search-box">
-                    <span class="search-icon">⌕</span>
+                <input
+                    type="text"
+                    id="ipInput"
+                    placeholder="Digite um endereço IP..."
+                    autocomplete="off"
+                >
 
-                    <input
-                        type="text"
-                        id="ipInput"
-                        placeholder="Enter an IP address..."
-                        autocomplete="off"
-                    >
-
-                    <button id="searchButton">
-                        SEARCH
-                    </button>
-                </div>
-
-                <button id="myIpButton" class="my-ip-button">
-                    <span>⌁</span> FIND MY IP
+                <button id="searchBtn">
+                    CONSULTAR
                 </button>
 
             </div>
 
-            <p id="errorMessage" class="error-message"></p>
+            <button id="myIpBtn" class="my-ip-btn">
+                ◉ CONSULTAR MEU IP
+            </button>
 
         </section>
 
         <section id="loading" class="loading hidden">
             <div class="loader"></div>
-            <span>ANALYZING IP ADDRESS...</span>
+            <span>CONSULTANDO INFORMAÇÕES...</span>
+        </section>
+
+        <section id="error" class="error hidden">
+            <span>⚠</span>
+            <p id="errorMessage">
+                Não foi possível consultar o endereço IP.
+            </p>
         </section>
 
         <section id="results" class="results hidden">
 
-            <div class="results-header">
+            <div class="section-title">
+                <span>01</span>
+                INFORMAÇÕES DO IP
+            </div>
+
+            <div class="main-ip-card">
+
                 <div>
-                    <p class="section-label">ANALYSIS RESULT</p>
-                    <h2 id="resultIp">000.000.000.000</h2>
+                    <small>ENDEREÇO IP</small>
+                    <h2 id="ipAddress">---</h2>
                 </div>
 
-                <button id="copyButton" class="copy-button">
-                    COPY DATA
-                </button>
-            </div>
-
-            <div class="cards">
-
-                <article class="info-card highlight">
-                    <span class="card-label">IP ADDRESS</span>
-                    <strong id="ipAddress">-</strong>
-                    <small id="ipVersion">-</small>
-                </article>
-
-                <article class="info-card">
-                    <span class="card-label">LOCATION</span>
-                    <strong id="location">-</strong>
-                    <small id="country">-</small>
-                </article>
-
-                <article class="info-card">
-                    <span class="card-label">ISP</span>
-                    <strong id="isp">-</strong>
-                    <small>Internet Service Provider</small>
-                </article>
-
-                <article class="info-card">
-                    <span class="card-label">ORGANIZATION</span>
-                    <strong id="organization">-</strong>
-                    <small id="asn">-</small>
-                </article>
-
-                <article class="info-card">
-                    <span class="card-label">TIMEZONE</span>
-                    <strong id="timezone">-</strong>
-                    <small id="utcOffset">-</small>
-                </article>
-
-                <article class="info-card">
-                    <span class="card-label">POSTAL CODE</span>
-                    <strong id="postal">-</strong>
-                    <small>Approximate location</small>
-                </article>
+                <div class="ip-type">
+                    <span id="ipVersion">IPv4</span>
+                </div>
 
             </div>
 
-            <div class="location-section">
+            <div class="info-grid">
 
-                <div class="location-info">
+                <div class="info-card">
+                    <span class="card-icon">🌎</span>
 
-                    <div class="section-title">
-                        <span class="terminal-symbol">></span>
-                        GEOLOCATION
+                    <div>
+                        <small>PAÍS</small>
+                        <strong id="country">---</strong>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">📍</span>
+
+                    <div>
+                        <small>REGIÃO</small>
+                        <strong id="region">---</strong>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">🏙</span>
+
+                    <div>
+                        <small>CIDADE</small>
+                        <strong id="city">---</strong>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">📮</span>
+
+                    <div>
+                        <small>CEP APROXIMADO</small>
+                        <strong id="postal">---</strong>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">📡</span>
+
+                    <div>
+                        <small>PROVEDOR</small>
+                        <strong id="isp">---</strong>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">🏢</span>
+
+                    <div>
+                        <small>ORGANIZAÇÃO</small>
+                        <strong id="organization">---</strong>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">🔗</span>
+
+                    <div>
+                        <small>ASN</small>
+                        <strong id="asn">---</strong>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">🕐</span>
+
+                    <div>
+                        <small>FUSO HORÁRIO</small>
+                        <strong id="timezone">---</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="section-title">
+                <span>02</span>
+                LOCALIZAÇÃO
+            </div>
+
+            <div class="location-container">
+
+                <div class="coordinates-card">
+
+                    <div class="coordinate">
+                        <small>LATITUDE</small>
+                        <strong id="latitude">---</strong>
                     </div>
 
-                    <div class="coordinates">
-
-                        <div>
-                            <span>LATITUDE</span>
-                            <strong id="latitude">-</strong>
-                        </div>
-
-                        <div>
-                            <span>LONGITUDE</span>
-                            <strong id="longitude">-</strong>
-                        </div>
-
+                    <div class="coordinate">
+                        <small>LONGITUDE</small>
+                        <strong id="longitude">---</strong>
                     </div>
 
                     <a
-                        id="mapLink"
+                        id="mapsLink"
                         href="#"
                         target="_blank"
-                        class="map-button"
+                        class="maps-btn"
                     >
-                        OPEN IN MAPS ↗
+                        📍 ABRIR NO GOOGLE MAPS
                     </a>
 
                 </div>
@@ -166,52 +206,65 @@
 
                     <div class="map-grid"></div>
 
-                    <div class="map-center">
+                    <div class="map-marker">
                         <span></span>
                     </div>
 
                     <div class="map-text">
-                        LOCATION DETECTED
+                        LOCALIZAÇÃO APROXIMADA
                     </div>
 
                 </div>
 
             </div>
 
-        </section>
+            <div class="section-title">
+                <span>03</span>
+                AÇÕES
+            </div>
 
-        <section id="historySection" class="history hidden">
+            <div class="actions">
 
-            <div class="history-header">
-                <div>
-                    <p class="section-label">LOCAL STORAGE</p>
-                    <h2>SEARCH HISTORY</h2>
-                </div>
-
-                <button id="clearHistory">
-                    CLEAR
+                <button id="copyBtn" class="action-btn">
+                    📋 COPIAR INFORMAÇÕES
                 </button>
-            </div>
 
-            <div id="historyList"></div>
+            </div>
 
         </section>
 
-        <footer>
+        <section class="history-section">
 
-            <div>
-                IP INTELLIGENCE
-                <span>•</span>
-                NETWORK ANALYSIS TOOL
+            <div class="section-title">
+                <span>04</span>
+                HISTÓRICO DE CONSULTAS
             </div>
 
-            <div>
-                BUILT WITH HTML / CSS / JAVASCRIPT
+            <div id="history" class="history">
+                <div class="empty-history">
+                    Nenhuma consulta realizada.
+                </div>
             </div>
 
-        </footer>
+            <button id="clearHistoryBtn" class="clear-history">
+                LIMPAR HISTÓRICO
+            </button>
+
+        </section>
 
     </main>
+
+    <footer>
+
+        <p>
+            IP INTELLIGENCE
+        </p>
+
+        <span>
+            A localização exibida é aproximada e baseada no endereço IP.
+        </span>
+
+    </footer>
 
     <script src="script.js"></script>
 
