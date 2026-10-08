@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>IP Intelligence</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="background-grid"></div>
+
+    <main class="container">
+
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">◉</span>
+                <span>IP<span>INTELLIGENCE</span></span>
+            </div>
+
+            <div class="status">
+                <span class="status-dot"></span>
+                SYSTEM ONLINE
+            </div>
+        </header>
+
+        <section class="hero">
+
+            <p class="terminal-label">
+                <span>></span> IP_ANALYSIS_SYSTEM
+            </p>
+
+            <h1>
+                Discover information<br>
+                about any <span>IP address.</span>
+            </h1>
+
+            <p class="description">
+                Analyze public IP addresses and discover network,
+                geographic and technical information.
+            </p>
+
+            <div class="search-container">
+
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        id="ipInput"
+                        placeholder="Enter an IP address..."
+                        autocomplete="off"
+                    >
+
+                    <button id="searchButton">
+                        SEARCH
+                    </button>
+                </div>
+
+                <button id="myIpButton" class="my-ip-button">
+                    <span>⌁</span> FIND MY IP
+                </button>
+
+            </div>
+
+            <p id="errorMessage" class="error-message"></p>
+
+        </section>
+
+        <section id="loading" class="loading hidden">
+            <div class="loader"></div>
+            <span>ANALYZING IP ADDRESS...</span>
+        </section>
+
+        <section id="results" class="results hidden">
+
+            <div class="results-header">
+                <div>
+                    <p class="section-label">ANALYSIS RESULT</p>
+                    <h2 id="resultIp">000.000.000.000</h2>
+                </div>
+
+                <button id="copyButton" class="copy-button">
+                    COPY DATA
+                </button>
+            </div>
+
+            <div class="cards">
+
+                <article class="info-card highlight">
+                    <span class="card-label">IP ADDRESS</span>
+                    <strong id="ipAddress">-</strong>
+                    <small id="ipVersion">-</small>
+                </article>
+
+                <article class="info-card">
+                    <span class="card-label">LOCATION</span>
+                    <strong id="location">-</strong>
+                    <small id="country">-</small>
+                </article>
+
+                <article class="info-card">
+                    <span class="card-label">ISP</span>
+                    <strong id="isp">-</strong>
+                    <small>Internet Service Provider</small>
+                </article>
+
+                <article class="info-card">
+                    <span class="card-label">ORGANIZATION</span>
+                    <strong id="organization">-</strong>
+                    <small id="asn">-</small>
+                </article>
+
+                <article class="info-card">
+                    <span class="card-label">TIMEZONE</span>
+                    <strong id="timezone">-</strong>
+                    <small id="utcOffset">-</small>
+                </article>
+
+                <article class="info-card">
+                    <span class="card-label">POSTAL CODE</span>
+                    <strong id="postal">-</strong>
+                    <small>Approximate location</small>
+                </article>
+
+            </div>
+
+            <div class="location-section">
+
+                <div class="location-info">
+
+                    <div class="section-title">
+                        <span class="terminal-symbol">></span>
+                        GEOLOCATION
+                    </div>
+
+                    <div class="coordinates">
+
+                        <div>
+                            <span>LATITUDE</span>
+                            <strong id="latitude">-</strong>
+                        </div>
+
+                        <div>
+                            <span>LONGITUDE</span>
+                            <strong id="longitude">-</strong>
+                        </div>
+
+                    </div>
+
+                    <a
+                        id="mapLink"
+                        href="#"
+                        target="_blank"
+                        class="map-button"
+                    >
+                        OPEN IN MAPS ↗
+                    </a>
+
+                </div>
+
+                <div class="map-placeholder">
+
+                    <div class="map-grid"></div>
+
+                    <div class="map-center">
+                        <span></span>
+                    </div>
+
+                    <div class="map-text">
+                        LOCATION DETECTED
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section id="historySection" class="history hidden">
+
+            <div class="history-header">
+                <div>
+                    <p class="section-label">LOCAL STORAGE</p>
+                    <h2>SEARCH HISTORY</h2>
+                </div>
+
+                <button id="clearHistory">
+                    CLEAR
+                </button>
+            </div>
+
+            <div id="historyList"></div>
+
+        </section>
+
+        <footer>
+
+            <div>
+                IP INTELLIGENCE
+                <span>•</span>
+                NETWORK ANALYSIS TOOL
+            </div>
+
+            <div>
+                BUILT WITH HTML / CSS / JAVASCRIPT
+            </div>
+
+        </footer>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
